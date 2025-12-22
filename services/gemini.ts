@@ -11,7 +11,7 @@ export const generatePlanSummary = async (data: PlanData): Promise<string> => {
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
   const selectedItems = data.items.filter(item => data.selections[item.id]?.selected);
   const preferencesList = selectedItems.map(item => {
@@ -37,13 +37,15 @@ export const generatePlanSummary = async (data: PlanData): Promise<string> => {
   try {
     console.log("Calling Gemini API with prompt length:", prompt.length);
     const result = await model.generateContent(prompt);
-    console.log("Gemini result received");
     const response = await result.response;
     const text = response.text();
-    console.log("Gemini response text length:", text.length);
+    console.log("Gemini response text obtained");
     return text || "Could not generate summary.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini Error:", error);
+    if (error.message?.includes('404')) {
+      return "Model not found. Please check implementation.";
+    }
     return "Error generating AI summary. Please review your preferences manually.";
   }
 };

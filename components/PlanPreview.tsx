@@ -13,10 +13,34 @@ interface PlanPreviewProps {
 
 const PlanPreview: React.FC<PlanPreviewProps> = ({ data, summary, onEditSection, onReGenerate, isGenerating }) => {
   const selectedItems = data.items.filter(item => data.selections[item.id]?.selected);
-  
+
   const laborItems = selectedItems.filter(i => i.category === 'Labor');
   const deliveryItems = selectedItems.filter(i => i.category === 'Delivery');
   const cesareanItems = selectedItems.filter(i => i.category === 'Cesarean');
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return 'TBD';
+    try {
+      // Handle YYYY-MM-DD format from input type="date"
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return dateStr;
+
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+
+      const date = new Date(year, month, day);
+      if (isNaN(date.getTime())) return dateStr;
+
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (e) {
+      return dateStr;
+    }
+  };
 
   if (selectedItems.length === 0) {
     return (
@@ -24,7 +48,7 @@ const PlanPreview: React.FC<PlanPreviewProps> = ({ data, summary, onEditSection,
         <AlertCircle className="mx-auto text-slate-300 mb-4" size={48} />
         <h2 className="text-2xl font-serif text-slate-800 mb-2">Nothing selected yet</h2>
         <p className="text-slate-500 mb-6">Go back to the sections to select your preferences.</p>
-        <button 
+        <button
           onClick={() => onEditSection('labor')}
           className="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold"
         >
@@ -53,10 +77,10 @@ const PlanPreview: React.FC<PlanPreviewProps> = ({ data, summary, onEditSection,
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-500 pt-4">
             <div><span className="font-bold text-slate-400 uppercase text-[10px] block mb-1">Expectant Parent</span> {data.patientName || 'TBD'}</div>
             <div><span className="font-bold text-slate-400 uppercase text-[10px] block mb-1">Birth Partner</span> {data.partnerName || 'None'}</div>
-            <div><span className="font-bold text-slate-400 uppercase text-[10px] block mb-1">Due Date</span> {data.dueDate || 'TBD'}</div>
+            <div><span className="font-bold text-slate-400 uppercase text-[10px] block mb-1">Due Date</span> {formatDate(data.dueDate)}</div>
           </div>
         </div>
-        
+
         <div className="bg-indigo-900 text-white p-6 rounded-2xl max-w-xs shadow-xl">
           <p className="text-xs leading-relaxed opacity-90 italic">
             "We approach this birth with hope and trust. These wishes represent our ideal path, while remaining flexible to medical necessity for the safety of mother and child."
@@ -70,7 +94,7 @@ const PlanPreview: React.FC<PlanPreviewProps> = ({ data, summary, onEditSection,
           <div className="bg-slate-50 p-8 rounded-2xl border border-slate-200 text-center no-print">
             <Sparkles className="mx-auto text-indigo-400 mb-3" />
             <p className="text-slate-600 text-sm mb-4">Want a professional summary for your doctor?</p>
-            <button 
+            <button
               onClick={onReGenerate}
               className="bg-indigo-600 text-white px-6 py-2 rounded-full text-xs font-bold"
             >
@@ -83,9 +107,9 @@ const PlanPreview: React.FC<PlanPreviewProps> = ({ data, summary, onEditSection,
               <h3 className="text-sm font-bold text-indigo-900 uppercase tracking-widest flex items-center gap-2">
                 <Sparkles size={14} className="no-print" /> Care Team Overview
               </h3>
-              <button 
-                onClick={onReGenerate} 
-                disabled={isGenerating} 
+              <button
+                onClick={onReGenerate}
+                disabled={isGenerating}
                 className="no-print text-indigo-600 hover:text-indigo-800 transition-colors"
               >
                 <Edit2 size={14} />
@@ -108,14 +132,14 @@ const PlanPreview: React.FC<PlanPreviewProps> = ({ data, summary, onEditSection,
           <div key={section.id} className="mb-16 last:mb-0 relative group">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-2xl font-serif text-slate-800">{section.title}</h3>
-              <button 
+              <button
                 onClick={() => onEditSection(section.id)}
                 className="no-print opacity-0 group-hover:opacity-100 flex items-center gap-1 text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full transition-all"
               >
                 <Edit2 size={12} /> Edit
               </button>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
               {section.items.map(item => (
                 <div key={item.id} className="flex gap-4">

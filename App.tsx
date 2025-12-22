@@ -9,7 +9,7 @@ import { generatePlanSummary } from './services/gemini';
 import { Sparkles, User, Calendar, Heart, ChevronRight, ChevronLeft, Download } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('labor');
+  const [activeTab, setActiveTab] = useState('landing');
   const [selections, setSelections] = useState<Selections>({});
   const [patientName, setPatientName] = useState('');
   const [partnerName, setPartnerName] = useState('');
@@ -89,6 +89,66 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'landing':
+        return (
+          <div className="animate-in fade-in zoom-in duration-700 max-w-4xl mx-auto text-center py-20">
+            <div className="mb-8 inline-flex items-center justify-center w-20 h-20 bg-indigo-100 rounded-3xl text-indigo-600 shadow-inner">
+              <Sparkles size={40} />
+            </div>
+            <h1 className="text-6xl font-serif text-slate-900 mb-6 leading-tight">
+              Visualize Your <span className="text-indigo-600 italic">Birth Journey</span>
+            </h1>
+            <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+              A specialized tool designed to help you communicate your unique birth preferences clearly and professionally with your medical team.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                onClick={() => setActiveTab('labor')}
+                className="bg-indigo-600 text-white px-10 py-5 rounded-full font-bold text-lg shadow-2xl hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
+              >
+                Create My Birth Plan <ChevronRight size={24} />
+              </button>
+              <button
+                onClick={() => {
+                  const saved = localStorage.getItem('birth-plan-state');
+                  if (saved) {
+                    setActiveTab('preview');
+                  } else {
+                    alert("No saved plan found. Let's start a new one!");
+                    setActiveTab('labor');
+                  }
+                }}
+                className="bg-white text-slate-600 px-10 py-5 rounded-full font-bold text-lg border border-slate-200 hover:bg-slate-50 transition-all"
+              >
+                View Saved Plan
+              </button>
+            </div>
+
+            <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-12 text-left">
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500">
+                  <Heart size={24} />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800">Intuitive Selection</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">Choose from over 50+ options across labor, delivery, and cesarean scenarios.</p>
+              </div>
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500">
+                  <Sparkles size={24} />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800">AI-Powered Summary</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">Transform your selections into a professional cover letter for your care team.</p>
+              </div>
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white">
+                  <Download size={24} />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800">Visual PDF Export</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">Generate a beautiful, easy-to-read document to print and bring to the hospital.</p>
+              </div>
+            </div>
+          </div>
+        );
       case 'labor':
         return (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -204,7 +264,7 @@ const App: React.FC = () => {
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <main className="flex-1 max-w-6xl mx-auto px-4 py-8 w-full">
-        {activeTab !== 'preview' && (
+        {activeTab !== 'preview' && activeTab !== 'landing' && (
           <div className="no-print bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-8 grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in duration-300">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
