@@ -56,6 +56,7 @@ const App: React.FC = () => {
   };
 
   const handleGeneratePlan = async () => {
+    console.log("handleGeneratePlan started");
     setIsGenerating(true);
     const data: PlanData = {
       items: BIRTH_PLAN_OPTIONS,
@@ -64,11 +65,18 @@ const App: React.FC = () => {
       partnerName,
       dueDate
     };
-    const aiSummary = await generatePlanSummary(data);
-    setSummary(aiSummary);
-    setIsGenerating(false);
-    setActiveTab('preview');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    try {
+      console.log("Calling generatePlanSummary service...");
+      const aiSummary = await generatePlanSummary(data);
+      console.log("Summary received:", aiSummary.substring(0, 50) + "...");
+      setSummary(aiSummary);
+      setIsGenerating(false);
+      setActiveTab('preview');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+      console.error("Error in handleGeneratePlan:", error);
+      setIsGenerating(false);
+    }
   };
 
   const handlePrint = () => {
@@ -84,15 +92,15 @@ const App: React.FC = () => {
       case 'labor':
         return (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <BirthPlanSection 
-              title="Labor Preferences" 
-              items={laborItems} 
+            <BirthPlanSection
+              title="Labor Preferences"
+              items={laborItems}
               selections={selections}
               onToggle={toggleItem}
               onNoteChange={handleNoteChange}
             />
             <div className="flex justify-end mt-8">
-              <button 
+              <button
                 onClick={() => setActiveTab('delivery')}
                 className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-indigo-700 transition-all"
               >
@@ -104,21 +112,21 @@ const App: React.FC = () => {
       case 'delivery':
         return (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <BirthPlanSection 
-              title="Post-Delivery Care" 
-              items={deliveryItems} 
+            <BirthPlanSection
+              title="Post-Delivery Care"
+              items={deliveryItems}
               selections={selections}
               onToggle={toggleItem}
               onNoteChange={handleNoteChange}
             />
             <div className="flex justify-between mt-8">
-              <button 
+              <button
                 onClick={() => setActiveTab('labor')}
                 className="flex items-center gap-2 bg-slate-200 text-slate-700 px-6 py-3 rounded-full font-bold hover:bg-slate-300 transition-all"
               >
                 <ChevronLeft size={18} /> Back: Labor
               </button>
-              <button 
+              <button
                 onClick={() => setActiveTab('cesarean')}
                 className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-indigo-700 transition-all"
               >
@@ -130,33 +138,33 @@ const App: React.FC = () => {
       case 'cesarean':
         return (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <BirthPlanSection 
-              title="Cesarean Preferences" 
-              items={cesareanItems} 
+            <BirthPlanSection
+              title="Cesarean Preferences"
+              items={cesareanItems}
               selections={selections}
               onToggle={toggleItem}
               onNoteChange={handleNoteChange}
             />
             <div className="flex justify-between mt-8">
-              <button 
+              <button
                 onClick={() => setActiveTab('delivery')}
                 className="flex items-center gap-2 bg-slate-200 text-slate-700 px-6 py-3 rounded-full font-bold hover:bg-slate-300 transition-all"
               >
                 <ChevronLeft size={18} /> Back: Delivery
               </button>
-              <button 
+              <button
                 onClick={handleGeneratePlan}
                 disabled={isGenerating}
                 className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-full font-bold shadow-xl hover:bg-indigo-700 transition-all scale-105"
               >
                 {isGenerating ? (
-                   <>
-                     <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                     </svg>
-                     Finalizing...
-                   </>
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Finalizing...
+                  </>
                 ) : (
                   <>
                     <Sparkles size={18} /> Generate Final Plan
@@ -169,15 +177,15 @@ const App: React.FC = () => {
       case 'preview':
         return (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <PlanPreview 
-              data={{ items: BIRTH_PLAN_OPTIONS, selections, patientName, partnerName, dueDate }} 
+            <PlanPreview
+              data={{ items: BIRTH_PLAN_OPTIONS, selections, patientName, partnerName, dueDate }}
               summary={summary}
               onEditSection={(sectionId) => setActiveTab(sectionId)}
               onReGenerate={handleGeneratePlan}
               isGenerating={isGenerating}
             />
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12 mb-20 no-print">
-              <button 
+              <button
                 onClick={handlePrint}
                 className="bg-slate-900 text-white px-12 py-4 rounded-full font-bold shadow-2xl flex items-center gap-3 hover:scale-105 active:scale-95 transition-all"
               >
@@ -202,9 +210,9 @@ const App: React.FC = () => {
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
                 <User size={12} /> Patient Name
               </label>
-              <input 
-                type="text" 
-                value={patientName} 
+              <input
+                type="text"
+                value={patientName}
                 onChange={e => setPatientName(e.target.value)}
                 className="w-full bg-slate-50 border-transparent focus:bg-white focus:border-indigo-300 rounded-lg p-2 text-sm transition-all outline-none"
                 placeholder="Jane Doe"
@@ -214,9 +222,9 @@ const App: React.FC = () => {
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
                 <Heart size={12} /> Partner Name
               </label>
-              <input 
-                type="text" 
-                value={partnerName} 
+              <input
+                type="text"
+                value={partnerName}
                 onChange={e => setPartnerName(e.target.value)}
                 className="w-full bg-slate-50 border-transparent focus:bg-white focus:border-indigo-300 rounded-lg p-2 text-sm transition-all outline-none"
                 placeholder="John Doe"
@@ -226,9 +234,9 @@ const App: React.FC = () => {
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
                 <Calendar size={12} /> Due Date
               </label>
-              <input 
-                type="date" 
-                value={dueDate} 
+              <input
+                type="date"
+                value={dueDate}
                 onChange={e => setDueDate(e.target.value)}
                 className="w-full bg-slate-50 border-transparent focus:bg-white focus:border-indigo-300 rounded-lg p-2 text-sm transition-all outline-none"
               />
@@ -243,7 +251,7 @@ const App: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 text-center">
           <p className="text-xs uppercase tracking-[0.2em] font-bold text-slate-500 mb-4">Birth Plan Visualizer</p>
           <p className="text-[10px] max-w-md mx-auto text-slate-600">
-            This tool is designed to facilitate communication between you and your healthcare providers. 
+            This tool is designed to facilitate communication between you and your healthcare providers.
             It is not a medical document and doesn't replace professional medical advice.
           </p>
         </div>
