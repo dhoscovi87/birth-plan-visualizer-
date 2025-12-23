@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "env": {
+    "GEMINI_API_KEY": "@gemini_api_key"
+  },
+  "comment": "The '@gemini_api_key' syntax references a Vercel environment variable. Set this in your Vercel project settings under Environment Variables."
+}

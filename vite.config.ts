@@ -4,7 +4,13 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
+    // Use environment variable for base path or default to root
+    // For GitHub Pages, set GITHUB_PAGES=true and optionally VITE_BASE_PATH
+    const basePath = process.env.VITE_BASE_PATH || 
+                     (process.env.GITHUB_PAGES ? '/birth-plan-visualizer-/' : '/');
+    
     return {
+      base: basePath,
       server: {
         port: 3000,
         host: '0.0.0.0',
