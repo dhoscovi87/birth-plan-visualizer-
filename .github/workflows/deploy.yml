@@ -34,6 +34,9 @@ jobs:
       - name: Build
         run: npm run build
         env:
+          # API key is embedded in the build via Vite's define feature
+          # Note: This makes it visible in client-side code
+          # For production, consider using domain restrictions in Google Cloud Console
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_PAGES: true
 

@@ -243,3 +243,16 @@ For issues or questions:
 - Keep API keys secure and rotate them regularly
 - Monitor API usage in Google AI Studio dashboard
 - Consider implementing rate limiting for production use
+
+### Important: Client-Side API Key Exposure
+
+⚠️ **Note**: This application uses a client-side architecture where the Gemini API key is embedded in the JavaScript bundle at build time. This means the API key will be visible in the browser's developer tools.
+
+**Recommendations for production use:**
+- Use API key restrictions in Google Cloud Console (restrict to your domain)
+- Set usage quotas to prevent abuse
+- Monitor your API usage regularly
+- Consider implementing a backend proxy for production deployments to keep the API key secure
+- For public deployments, be aware that your API key may be discovered and used by others
+
+For sensitive production use, consider creating a backend service that proxies requests to the Gemini API, keeping the API key server-side.
