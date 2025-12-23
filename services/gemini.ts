@@ -11,7 +11,7 @@ export const generatePlanSummary = async (data: PlanData): Promise<string> => {
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+  const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
   const selectedItems = data.items.filter(item => data.selections[item.id]?.selected);
   const preferencesList = selectedItems.map(item => {
